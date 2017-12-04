@@ -28,12 +28,20 @@ class VehiclesController extends Controller
         return new Response($result);
     }
 
-    public function findVehicle(string $year, string $manufacturer, string $model, ApiVehiclesRepository $vehiclesRepository)
+    public function findVehicle(string $year, string $manufacturer, string $model, Request $request, ApiVehiclesRepository $vehiclesRepository)
     {
-        $result = $vehiclesRepository->find($year, $manufacturer, $model);
-
         $serializer = $this->container->get('jms_serializer');
-        $context = SerializationContext::create()->setGroups(['basic']);
+
+        $withRating = $request->get('withRating');
+
+        if ($withRating === 'true') {
+            $result = $vehiclesRepository->findWithRating($year, $manufacturer, $model);
+            $context = SerializationContext::create()->setGroups(['basic', 'rating']);
+        } else {
+            $result = $vehiclesRepository->find($year, $manufacturer, $model);
+            $context = SerializationContext::create()->setGroups(['basic']);
+        }
+
         $result = $serializer->serialize($result, 'json', $context);
 
         return new Response($result);

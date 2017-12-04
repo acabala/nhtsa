@@ -27,4 +27,20 @@ class Vehicle
         $this->id = $id;
         $this->description = $description;
     }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

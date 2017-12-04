@@ -30,4 +30,9 @@ class VehiclesCollection
     {
         return count($this->items);
     }
+
+    public function getAll() : array
+    {
+        return $this->items;
+    }
 }

@@ -1,8 +1,8 @@
-app_vehicles_get_all:
+app_vehicles_post:
     path: /vehicles
     controller: App\Controller\VehiclesController::postVehicle
     methods: POST
-app_vehicles_get_one:
-    path: /vehicles/{year}/{mark}/{model}
+app_vehicles_get:
+    path: /vehicles/{year}/{manufacturer}/{model}
     controller: App\Controller\VehiclesController::findVehicle
     methods: GET
