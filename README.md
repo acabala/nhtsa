@@ -14,6 +14,10 @@ run build-in server on port 8080
 ```
 
 
+run phpspec tests
+```
+./vendor/bin/phpspec run
+```
 
 ## Available endpoints
 

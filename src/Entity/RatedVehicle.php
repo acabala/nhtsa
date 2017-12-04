@@ -20,4 +20,12 @@ class RatedVehicle extends Vehicle
         $this->rating = $rating;
         parent::__construct($id, $description);
     }
+
+    /**
+     * @return string
+     */
+    public function getRating()
+    {
+        return $this->rating;
+    }
 }
