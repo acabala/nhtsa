@@ -5,12 +5,21 @@ namespace App\Controller;
 use App\DTO\VehiclesCollection;
 use App\Repository\ApiVehiclesRepository;
 use JMS\Serializer\SerializationContext;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class VehiclesController extends Controller
 {
+    /** @var SerializerInterface */
+    private $serializer;
+
+    public function __construct(SerializerInterface $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     public function postVehicle(Request $request, ApiVehiclesRepository $vehiclesRepository)
     {
         $data = \GuzzleHttp\json_decode($request->getContent(), true);
@@ -21,17 +30,14 @@ class VehiclesController extends Controller
             $result = $vehiclesRepository->find($data['modelYear'], $data['manufacturer'], $data['model']);
         }
 
-        $serializer = $this->container->get('jms_serializer');
         $context = SerializationContext::create()->setGroups(['basic']);
-        $result = $serializer->serialize($result, 'json', $context);
+        $result = $this->serializer->serialize($result, 'json', $context);
 
         return new Response($result);
     }
 
     public function findVehicle(string $year, string $manufacturer, string $model, Request $request, ApiVehiclesRepository $vehiclesRepository)
     {
-        $serializer = $this->container->get('jms_serializer');
-
         $withRating = $request->get('withRating');
 
         if ($withRating === 'true') {
@@ -42,7 +48,7 @@ class VehiclesController extends Controller
             $context = SerializationContext::create()->setGroups(['basic']);
         }
 
-        $result = $serializer->serialize($result, 'json', $context);
+        $result = $this->serializer->serialize($result, 'json', $context);
 
         return new Response($result);
     }
