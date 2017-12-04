@@ -6,6 +6,7 @@ use App\DTO\VehiclesCollection;
 use App\Entity\RatedVehicle;
 use App\Entity\Vehicle;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\ClientException;
 
 class ApiVehiclesRepository implements VehiclesRepository
 {
@@ -20,13 +21,15 @@ class ApiVehiclesRepository implements VehiclesRepository
     public function find(string $year, string $manufacturer, string $model) : VehiclesCollection
     {
         $uri = sprintf('modelyear/%s/make/%s/model/%s?format=json', $year, $manufacturer, $model);
-        $query = $this->client->request('get', $uri);
-        $queryResult = \GuzzleHttp\json_decode($query->getBody()->getContents(),true);
-
         $collection = new VehiclesCollection();
-        foreach ($queryResult['Results'] as $result) {
-            $collection->add(new Vehicle($result['VehicleId'], $result['VehicleDescription']));
-        }
+        try {
+            $query = $this->client->request('get', $uri);
+            $queryResult = \GuzzleHttp\json_decode($query->getBody()->getContents(), true);
+
+            foreach ($queryResult['Results'] as $result) {
+                $collection->add(new Vehicle($result['VehicleId'], $result['VehicleDescription']));
+            }
+        } catch (ClientException $e) {}
 
         return $collection;
     }
